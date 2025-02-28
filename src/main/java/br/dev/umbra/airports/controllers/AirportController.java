@@ -4,6 +4,7 @@
  */
 package br.dev.umbra.airports.controllers;
 
+import br.dev.umbra.airports.DTO.AirportMinDTO;
 import br.dev.umbra.airports.entities.Airport;
 import br.dev.umbra.airports.service.AirportService;
 import java.util.List;
@@ -56,6 +57,20 @@ public class AirportController {
             return ResponseEntity.ok(result);
         }
         
+    }
+    
+    @GetMapping("/country/{countryName}")
+    public ResponseEntity<List<AirportMinDTO>> findByCountryIgnoreCase(@PathVariable String countryName) {
+        List<AirportMinDTO> result = airportService.findByCountry(countryName);
+        if (result.isEmpty()) {
+            //Lista vazia
+            // notFound devolve 404
+            return ResponseEntity.notFound().build();
+            
+        } else {
+            // ok devolve 200
+            return ResponseEntity.ok(result);
+        }
     }
     
 }

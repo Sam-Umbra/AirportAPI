@@ -4,6 +4,7 @@
  */
 package br.dev.umbra.airports.service;
 
+import br.dev.umbra.airports.DTO.AirportMinDTO;
 import br.dev.umbra.airports.entities.Airport;
 import br.dev.umbra.airports.repositories.AirportRepository;
 import java.util.List;
@@ -37,5 +38,18 @@ public class AirportService {
         return result;
     }
     
+    /**
+     * Retorna DTO AirportsMinDTO filtrado por country (país).
+     * @param country
+     * @return
+     */
+    public List<AirportMinDTO> findByCountry(String country) {
+        List<Airport> resultAirport = airportRepository.findByCountryIgnoreCase(country);
+        
+        List<AirportMinDTO> resultDTO = resultAirport.stream()
+                .map(x -> new AirportMinDTO(x)).toList();
+        
+        return resultDTO;
+    }
     
 }
