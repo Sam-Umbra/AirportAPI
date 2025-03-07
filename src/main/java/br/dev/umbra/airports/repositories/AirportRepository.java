@@ -5,8 +5,10 @@
 package br.dev.umbra.airports.repositories;
 
 import br.dev.umbra.airports.entities.Airport;
+import br.dev.umbra.airports.projections.AirportNearMeProjection;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  *
@@ -18,5 +20,30 @@ public interface AirportRepository extends JpaRepository<Airport, Long> {
     List<Airport> findByCountryIgnoreCase(String country);
     
     Airport findByIataCode(String iataCode);
+    
+    @Query(nativeQuery = true, value = """
+        SELECT
+            airport.id,
+            airport.name,
+            airport.city,
+            airport.iatacode,
+            airport.latitude,
+            airport.longitude,
+            airport.altitude,
+                                       
+            SQRT(
+                power(airport.latitude - :latOrigem, 2 ) +
+                power(airport.longitude - :lonOrigem, 2)
+                ) * 60 * 1.852 as distanciaKM,
+            SQRT(
+                POWER(airport.latitude - :latOrigem, 2) +
+                POWER(airport.longitude - :lonOrigem, 2)
+            ) * 60 AS distanciaNM
+                                       
+        from AIRPORT
+        order by distanciaKM
+        limit 10; """
+    )
+    List<AirportNearMeProjection> findNearMe(double latOrigem, double lonOrigem);
     
 }

@@ -5,6 +5,7 @@
 package br.dev.umbra.airports.controllers;
 
 import br.dev.umbra.airports.DTO.AirportMinDTO;
+import br.dev.umbra.airports.DTO.AirportNearMeDTO;
 import br.dev.umbra.airports.entities.Airport;
 import br.dev.umbra.airports.service.AirportService;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -84,6 +86,31 @@ public class AirportController {
             
         } else {
             // ok devolve 200
+            return ResponseEntity.ok(result);
+        }
+    }
+    
+    /**
+     * Endpoint /airports/nearme
+     * Retorna os aeroportos próximos a coordenada enviada como parâmetro
+     * da requisoção GET.
+     * 
+     * @param latitude
+     * @param longitude
+     * @return 
+     */
+    @GetMapping("/nearme")
+    public ResponseEntity<List<AirportNearMeDTO>> findNearMe(
+            @RequestParam double latitude,
+            @RequestParam double longitude ) {
+        
+        List<AirportNearMeDTO> result = airportService.findNearMe(latitude, longitude);
+        
+        if (result.isEmpty()) {
+            //notFound devolve 404
+            return ResponseEntity.notFound().build();
+        } else {
+            //ok devolve 200
             return ResponseEntity.ok(result);
         }
     }
